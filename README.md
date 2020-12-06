@@ -36,12 +36,13 @@ This process includes building the specific version of LLVM that VeGen uses
 and should take about half an hour, depending on your machine.
 We hardcoded the number of threads that `make` can use to 36 in the scripts.
 You can modify this.
-After this, you should see the following directories
+After this, you should see the following directories.
  - `llvm-project`
  - `llvm-build`
  - `vegen`
  - `vegen-build`
- - `vegen-bench`.
+ - `vegen-bench`
+
 `vegen` is the impelementation of VeGen,
  including its vectorizer generator (`vegen/sema`)
  and its target-independent vectorization heuristic (`vegen/gslp`).
