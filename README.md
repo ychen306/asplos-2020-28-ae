@@ -18,8 +18,8 @@ You would need the following dependencies -
 clang++ which is significantly faster at compiling our generated vectorizer)
  - git
  - bash
- - python3 (for generating the vectorizer)
- - python3 libraries (for generating the vectorizer)
+ - python3
+ - python3 libraries, all of which can be installed via pip.
    - ply
    - tqdm
    - z3-solver
@@ -28,27 +28,37 @@ clang++ which is significantly faster at compiling our generated vectorizer)
 
 ## Evaluation
 In a preferably empty directory (or this repository),
- run `CXX=<c++ of your choice> <path-to-this-repo>/scripts/build-all.sh`.
+ run the following command.
+```bash
+CXX=<c++ of your choice> <path-to-this-repo>/scripts/build-all.sh
+```
 This process includes building the specific version of LLVM that VeGen uses 
 and should take about half an hour, depending on your machine.
-We hardcoded the number of threads that `make` can use to be 36 in the scripts.
+We hardcoded the number of threads that `make` can use to 36 in the scripts.
 You can modify this.
-After this, you should see four directories `llvm-project`, `llvm-build`, `vegen`, `vegen-build`, and `vegen-bench`.
-`vegen` contains the source directory of VeGen, including its vectorizer generator (`vegen/sema`) and the LLVM pass implementation (`vegen/gslp`).
-`vegenbench` contains the benchmark suite.
+After this, you should see the following directories
+ - `llvm-project`
+ - `llvm-build`
+ - `vegen`
+ - `vegen-build`
+ - `vegen-bench`.
+`vegen` is the impelementation of VeGen,
+ including its vectorizer generator (`vegen/sema`)
+ and its target-independent vectorization heuristic (`vegen/gslp`).
+`vegenbench` is the benchmark suite.
 
 ### Benchmarking
-After this is done, you should find two binaries `./vegenbench/bench` and `./vegenbench/bench-ref`, both of which takes no argument to execute.
+After this is done, you should find two binaries `vegenbench/bench` and `vegenbench/bench-ref`, both of which takes no argument to execute.
 The first one reports the performance of the benchmarks optimized 
 by VeGen; the second by Clang/LLVM.
 
 ### Generating the Vectorizer
-A copy of the generated vector could be found in `./vegen/gslp/InstSema.cpp`,
+A copy of the generated vector could be found in `vegen/gslp/InstSema.cpp`,
 assuming you are in the same directory that you invoked `build-all.sh`.
 This part shows how to generate `InstSema.cpp`, which contains
 the target-specific components of VeGen.
 
-For all the commands run in this part of evaluation, we assume you are in the directory `./vegen/sema`.
+For all the commands run in this part of evaluation, we assume you are in the directory `vegen/sema`.
 
 VeGen generates `InstSema.cpp` from instruction semantics.
 The formal semantics for the subset of x86 vector intrinsics that we can
@@ -56,8 +66,7 @@ verify is in `./vegen/sema/intrinsics.all.sema`, which is our ad hoc format,
 where the odd rows are intrinsic names and even rows are their semantics
 in SMT formula.
 
-First we lift---this is done with a heuristic and can fail for some 
-instructions---these SMT formulas into a VeGen's
+First we lift these SMT formulas into a VeGen's
 instruction description language,
 using the following command (which implicitly uses `intrinsics.all.sema`).
 ```bash
