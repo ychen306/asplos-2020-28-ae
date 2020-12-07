@@ -18,6 +18,7 @@ You would need the following dependencies -
 clang++ which is significantly faster at compiling our generated vectorizer)
  - git
  - bash
+ - Intel [SDE](https://software.intel.com/content/www/us/en/develop/articles/intel-software-development-emulator.html) (This is only necessary if you want to reproduce the semantic extraction from intel's documentation).
  - python3
  - python3 libraries, all of which can be installed via pip.
    - ply
@@ -63,11 +64,18 @@ For all the commands run in this part of evaluation, we assume you are in the di
 
 VeGen generates `InstSema.cpp` from instruction semantics.
 The formal semantics for the subset of x86 vector intrinsics that we can
-verify is in `./vegen/sema/intrinsics.all.sema`, which is our ad hoc format,
-where the odd rows are intrinsic names and even rows are their semantics
-in SMT formula.
+verify is in `./vegen/sema/intrinsics.all.sema`, which is our ad hoc format.
+This is generated from Intel's intrinsic documentation in `data-latest.xml`.
+Note that `intrinsics.all.sema` is already included in the repository
+and that this step is optional.
+To reproduce it, use the following command---make sure Intel SDE is in your `PATTH`.
+```bash
+python3 sema-gen.py data-latest.xml intrinsics.all.sema <num threads>
+```
+On our 16-core machine, this process takes about 8 minutes.
 
-First we lift these SMT formulas into a VeGen's
+
+Now we lift these SMT formulas into a VeGen's
 instruction description language,
 using the following command (which implicitly uses `intrinsics.all.sema`).
 ```bash
