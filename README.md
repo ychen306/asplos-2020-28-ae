@@ -54,6 +54,7 @@ There are three sets of benchmarks/tests inside `vegenbench`.
  - `bench`. These are real-world DSP kernels we ported from FFmpeg and x265.
  - `synthetic`. These are the synthetic backend codegen test we ported from LLVM's unit test.
  - `dotprod`. These are some integer dot-product kernels we ported from OpenCV.
+
 Each set of benchmarks is has its standalone executable optimized by VeGen (e.g., `bench`), which takes no argument;
 each also has a reference version (i.e., executables postfixed with `-ref`) optimized with standard LLVM `-O3` passes.
 Use the following command to get the speedup.
@@ -89,7 +90,7 @@ verify is in `./vegen/sema/intrinsics.all.sema`, which is our ad hoc format.
 This is generated from Intel's intrinsic documentation in `data-latest.xml`.
 Note that `intrinsics.all.sema` is already included in the repository
 and that this step is optional.
-To reproduce it, use the following command---make sure Intel SDE is in your `PATTH`.
+To reproduce it, use the following command---make sure Intel SDE is in your `PATH`.
 ```bash
 python3 sema-gen.py data-latest.xml intrinsics.all.sema <num threads>
 ```
