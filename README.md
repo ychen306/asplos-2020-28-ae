@@ -31,7 +31,7 @@ clang++ which is significantly faster at compiling our generated vectorizer)
 In a preferably empty directory (or this repository),
  run the following command.
 ```bash
-CXX=<c++ of your choice> <path-to-this-repo>/scripts/build-all.sh
+CXX=<c++ compiler of your choice> <path-to-this-repo>/scripts/build-all.sh
 ```
 This process includes building the specific version of LLVM that VeGen uses 
 and should take about half an hour, depending on your machine.
@@ -50,9 +50,30 @@ After this, you should see the following directories.
 `vegenbench` is the benchmark suite.
 
 ### Benchmarking
-After this is done, you should find two binaries `vegenbench/bench` and `vegenbench/bench-ref`, both of which takes no argument to execute.
-The first one reports the performance of the benchmarks optimized 
-by VeGen; the second by Clang/LLVM.
+There are three sets of benchmarks/tests inside `vegenbench`.
+ - `bench`. These are real-world DSP kernels we ported from FFmpeg and x265.
+ - `synthetic`. These are the synthetic backend codegen test we ported from LLVM's unit test.
+ - `dotprod`. These are some integer dot-product kernels we ported from OpenCV.
+Each set of benchmarks is has its standalone executable optimized by VeGen (e.g., `bench`), which takes no argument;
+each also has a reference version (i.e., executables postfixed with `-ref`) optimized with standard LLVM `-O3` passes.
+Use the following command to get the speedup.
+```bash
+python3 get-speedup.py
+```
+
+### Using VeGen as an optimization pass
+There are some boilerplate Clang flags you need to set to use VeGen.
+These flags are set automatically by our benchmarking scripts.
+If you want to use VeGen outside of this context (e.g., to compile the example file `cmul-ex.c`), simply do the following.
+```bash
+# this command sets `CLANG_FLAGS` that you need to use VeGen
+source <...>/vegen/extra-clang-flags.sh
+```
+The command above sets the flags you need in the environment variable `CLANG_FLAGS`.
+To optimize `cmul-ex.c` using VeGen, a test file we include in `vegenbench`, just do the following.
+```bash
+<...>/llvm-build/bin/clang++ $CLANG_FLAGS cmul-ex.c -S
+```
 
 ### Generating the Vectorizer
 A copy of the generated vector could be found in `vegen/gslp/InstSema.cpp`,
