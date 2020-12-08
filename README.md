@@ -33,7 +33,7 @@ In a preferably empty directory (or this repository),
 ```bash
 CXX=<c++ compiler of your choice> <path-to-this-repo>/scripts/build-all.sh
 ```
-This process includes building the specific version of LLVM that VeGen uses 
+This process checks out VeGen, the evaluation benchmarks, builds the specific version of LLVM that VeGen uses,
 and should take about half an hour, depending on your machine.
 We hardcoded the number of threads that `make` can use to 36 in the scripts.
 You can modify this.
@@ -64,15 +64,15 @@ python3 get-speedup.py
 ### Using VeGen as an optimization pass
 There are some boilerplate Clang flags you need to set to use VeGen.
 These flags are set automatically by our benchmarking scripts.
-If you want to use VeGen outside of this context (e.g., to compile the example file `cmul-ex.c`), simply do the following.
+If you want to use VeGen outside of this context, first do the following.
 ```bash
-# this command sets `CLANG_FLAGS` that you need to use VeGen
-source <...>/vegen/extra-clang-flags.sh
+# this command sets `CLANG_FLAGS` to flags you need to use VeGen
+source <path-to-vegen>/extra-clang-flags.sh <path-to-vegen-build>
 ```
-The command above sets the flags you need in the environment variable `CLANG_FLAGS`.
-To optimize `cmul-ex.c` using VeGen, a test file we include in `vegenbench`, just do the following.
+Now you can, e.g., optimize the example file  `vegenbench/cmul-ex.cc` as follows.
 ```bash
-<...>/llvm-build/bin/clang++ $CLANG_FLAGS cmul-ex.c -S
+<...>/llvm-build/bin/clang++ $CLANG_FLAGS cmul-ex.cc -S
+# cat cmul-ex.s
 ```
 
 ### Generating the Vectorizer

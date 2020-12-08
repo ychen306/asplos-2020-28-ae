@@ -3,8 +3,7 @@ BENCH_DIR=`pwd`/$2
 
 export CXX=`pwd`/llvm-build/bin/clang++
 
-export GSLP_BUILD_DIR=`pwd`/vegen-build
-source $VEGEN_DIR/extra-clang-flags.sh
+source $VEGEN_DIR/extra-clang-flags.sh `pwd`/vegen-build
 export OPTFLAGS=$CLANG_FLAGS
 cd $BENCH_DIR
 git checkout asplos-ae
