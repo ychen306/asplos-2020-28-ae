@@ -4,7 +4,7 @@
 This repository contains the scripts and guide for the paper, VeGen: A Vectorizer Generator for SIMD and Beyond.
 
 This guide has two parts -
- - Reproducing the optimization results
+ - Reproducing the optimization results (Figure 9, 10, 11) and the vector code from the two case studies (Figure 2 and Figure 12).
  - Reproducing the auto-generated vectorizer
 
 Although logically the first part depends on the first part,
@@ -34,7 +34,7 @@ In a preferably empty directory (or this repository),
 CXX=<c++ compiler of your choice> <path-to-this-repo>/scripts/build-all.sh
 ```
 This process checks out VeGen, the evaluation benchmarks, builds the specific version of LLVM that VeGen uses,
-and should take about half an hour, depending on your machine.
+and takes about half an hour, depending on your machine.
 We hardcoded the number of threads that `make` can use to 36 in the scripts.
 You can modify this.
 After this, you should see the following directories.
@@ -55,7 +55,7 @@ There are three sets of benchmarks/tests inside `vegenbench`.
  - `synthetic`. These are the synthetic backend codegen test we ported from LLVM's unit test (Figure 9 of the review draft).
  - `dotprod`. These are some integer dot-product kernels we ported from OpenCV (Figure 10 of the review draft).
 
-Each set of benchmarks is has its standalone executable optimized by VeGen (e.g., `bench`), which takes no argument;
+Each set of benchmarks has its standalone executable optimized by VeGen (e.g., `bench`), which takes no argument;
 each also has a reference version (i.e., executables postfixed with `-ref`) optimized with standard LLVM `-O3` passes.
 Use the following command to get the speedup.
 ```bash
