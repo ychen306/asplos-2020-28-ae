@@ -18,7 +18,7 @@ You would need the following dependencies -
 clang++ which is significantly faster at compiling our generated vectorizer)
  - git
  - bash
- - Intel [SDE](https://software.intel.com/content/www/us/en/develop/articles/intel-software-development-emulator.html) (This is only necessary if you want to reproduce the semantic extraction from intel's documentation).
+ - Intel [SDE](https://software.intel.com/content/www/us/en/develop/articles/intel-software-development-emulator.html)
  - python3
  - python3 libraries, all of which can be installed via pip.
    - ply
@@ -52,8 +52,8 @@ After this, you should see the following directories.
 ### Benchmarking
 There are three sets of benchmarks/tests inside `vegenbench`.
  - `bench`. These are real-world DSP kernels we ported from FFmpeg and x265.
- - `synthetic`. These are the synthetic backend codegen test we ported from LLVM's unit test.
- - `dotprod`. These are some integer dot-product kernels we ported from OpenCV.
+ - `synthetic`. These are the synthetic backend codegen test we ported from LLVM's unit test (Figure 9 of the review draft).
+ - `dotprod`. These are some integer dot-product kernels we ported from OpenCV (Figure 10 of the review draft).
 
 Each set of benchmarks is has its standalone executable optimized by VeGen (e.g., `bench`), which takes no argument;
 each also has a reference version (i.e., executables postfixed with `-ref`) optimized with standard LLVM `-O3` passes.
@@ -67,13 +67,27 @@ There are some boilerplate Clang flags you need to set to use VeGen.
 These flags are set automatically by our benchmarking scripts.
 If you want to use VeGen outside of this context, first do the following.
 ```bash
-# this command sets `CLANG_FLAGS` to flags you need to use VeGen
-source <path-to-vegen>/extra-clang-flags.sh <path-to-vegen-build>
+# this command sets `CLANG_FLAGS` to the flags you need to use VeGen
+source <path-to-vegen>/flags.sh <path-to-vegen-build>
 ```
-Now you can, e.g., optimize the example file  `vegenbench/cmul-ex.cc` as follows.
+Now you can, e.g., optimize the example file  `vegenbench/ex-cmul.cc` as follows.
 ```bash
-<...>/llvm-build/bin/clang++ $CLANG_FLAGS cmul-ex.cc -S
-# cat cmul-ex.s
+<...>/llvm-build/bin/clang++ $CLANG_FLAGS <some file>.cc -S
+```
+
+We included the source code of the two case studies, the TVM dot-product kernel (Figure 2 of the review draft) and 
+the scalar complex multiplication kernel (Figure 12 of the review draft) in `vegenbench`.
+
+To reproduce vectorized the TVM kernel, do the following.
+```
+<...>/llvm-build/bin/clang++ $CLANG_FLAGS ex-tvm.cc -mavx512vnni -mavx512f -S
+cat ex-tvm.s
+```
+
+To reproduce the vectorized scalar complex multiplication kernel, do the following.
+```
+<...>/llvm-build/bin/clang++ $CLANG_FLAGS ex-cmul.cc -S
+cat ex-cmul.s
 ```
 
 ### Generating the Vectorizer
@@ -88,14 +102,13 @@ VeGen generates `InstSema.cpp` from instruction semantics.
 The formal semantics for the subset of x86 vector intrinsics that we can
 verify is in `./vegen/sema/intrinsics.all.sema`, which is our ad hoc format.
 This is generated from Intel's intrinsic documentation in `data-latest.xml`.
-Note that `intrinsics.all.sema` is already included in the repository
-and that this step is optional.
+Note that `intrinsics.all.sema` is already included in the repository.
 To reproduce it, use the following command---make sure Intel SDE is in your `PATH`.
 ```bash
 python3 sema-gen.py data-latest.xml intrinsics.all.sema <num threads>
 ```
 On our 16-core machine, this process takes about 8 minutes.
-
+Note that what you get in the end is not exactly equivalent due to nondeterminism from multithreading.
 
 Now we lift these SMT formulas into a VeGen's
 instruction description language,

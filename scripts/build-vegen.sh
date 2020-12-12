@@ -2,10 +2,12 @@ LLVM_BUILD_DIR=`pwd`/llvm-build
 
 VEGEN_DIR=`pwd`/$1
 
+CXX=`which $CXX`
+
 export PATH=$LLVM_BUILD_DIR/bin:$PATH
 
 cd $VEGEN_DIR
-git checkout asplos-ae
+#git checkout asplos-ae
 cd -
 
 rm -rf vegen-build
