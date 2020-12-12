@@ -14,8 +14,7 @@ we have a copy of the generated vectorizer so they can be done independently.
 You would need the following dependencies -
  - make
  - cmake
- - c++ compiler (we recommend
-clang++ which is significantly faster at compiling our generated vectorizer)
+ - clang (this is not a hard requirement, but we've found that GCC is very slow at compiling our generated vectorizer)
  - git
  - bash
  - Intel [SDE](https://software.intel.com/content/www/us/en/develop/articles/intel-software-development-emulator.html)
@@ -53,16 +52,15 @@ After this, you should see the following directories.
 `nas-vegen` and `nas-clang` are respectively the version of NAS benchmarks optimized by VeGen and Clang.
 
 ### Benchmarking
-There are three sets of benchmarks/tests inside `vegenbench`.
- - `bench`. These are real-world DSP kernels we ported from FFmpeg and x265.
+There are two sets of benchmarks/tests inside `vegenbench`.
  - `synthetic`. These are the synthetic backend codegen test we ported from LLVM's unit test (Figure 9 of the review draft).
  - `dotprod`. These are some integer dot-product kernels we ported from OpenCV (Figure 10 of the review draft).
 
-Each set of benchmarks has its standalone executable optimized by VeGen (e.g., `bench`), which takes no argument;
+Each set of benchmarks has its standalone executable optimized by VeGen (e.g., `synthetic`), which takes no argument;
 each also has a reference version (i.e., executables postfixed with `-ref`) optimized with standard LLVM `-O3` passes.
 Use the following command to get the speedup.
 ```bash
-python3 get-speedup.py
+make report
 ```
 
 To reproduce Figure 10, execute the programs in `nas-<vegen|clang>/bin/*.A,`, which reports their execution times.
@@ -86,13 +84,13 @@ the scalar complex multiplication kernel (Figure 12 of the review draft) in `veg
 
 To reproduce vectorized the TVM kernel, do the following.
 ```
-<...>/llvm-build/bin/clang++ $CLANG_FLAGS ex-tvm.cc -mavx512vnni -mavx512f -S
+../llvm-build/bin/clang++ $CLANG_FLAGS ex-tvm.cc -mavx512vnni -mavx512f -S
 cat ex-tvm.s
 ```
 
 To reproduce the vectorized scalar complex multiplication kernel, do the following.
 ```
-<...>/llvm-build/bin/clang++ $CLANG_FLAGS ex-cmul.cc -S
+../llvm-build/bin/clang++ $CLANG_FLAGS ex-cmul.cc -S
 cat ex-cmul.s
 ```
 
