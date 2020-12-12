@@ -43,11 +43,14 @@ After this, you should see the following directories.
  - `vegen`
  - `vegen-build`
  - `vegen-bench`
+ - `nas-vegen`
+ - `nas-clang`
 
 `vegen` is the impelementation of VeGen,
  including its vectorizer generator (`vegen/sema`)
  and its target-independent vectorization heuristic (`vegen/gslp`).
-`vegenbench` is the benchmark suite.
+`vegenbench` is our benchmark suite.
+`nas-vegen` and `nas-clang` are respectively the version of NAS benchmarks optimized by VeGen and Clang.
 
 ### Benchmarking
 There are three sets of benchmarks/tests inside `vegenbench`.
@@ -61,6 +64,9 @@ Use the following command to get the speedup.
 ```bash
 python3 get-speedup.py
 ```
+
+To reproduce Figure 10, execute the programs in `nas-<vegen|clang>/bin/*.A,`, which reports their execution times.
+Note that the `is` benchmark reports zero second regardless of which optimizer you use.
 
 ### Using VeGen as an optimization pass
 There are some boilerplate Clang flags you need to set to use VeGen.
